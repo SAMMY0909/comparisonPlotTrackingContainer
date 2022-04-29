@@ -135,26 +135,27 @@ for vartype in variables:
         lrt = b_tracks_lrt[b_tracks_lrt["valid"] == 1][var]
             
         plt.clf()
-            
-        fig,ax=plt.subplots(2,1)
+        fig,ax = plt.subplots(2,1,sharex=True)
             
         val_of_bins_x1, edges_of_bins_x1, patches_x1=ax[0].hist(stndrd, color = ['r'], bins = Bins[var], histtype='stepfilled', alpha=0.5, density=True, label="ttbar STD corr to c-jets")
         val_of_bins_x2, edges_of_bins_x2, patches_x2=ax[0].hist(lrt, color = ['g'], bins = Bins[var], histtype='stepfilled', alpha=0.5, density=True, label="ttbar STD+LRT corr to c-jets")
             
-        pltratio = np.divide(val_of_bins_x1,val_of_bins_x2,where=(val_of_bins_x2 != 0))
-        plterror = np.divide(val_of_bins_x1 * np.sqrt(val_of_bins_x2) + val_of_bins_x2 * np.sqrt(val_of_bins_x1),np.power(val_of_bins_x2, 2),where=(val_of_bins_x2 != 0))
+        pltratio = np.true_divide(val_of_bins_x2,val_of_bins_x1,where=(val_of_bins_x1 != 0))
+        plterror = np.true_divide(val_of_bins_x1 * np.sqrt(val_of_bins_x2) + val_of_bins_x2 * np.sqrt(val_of_bins_x1),np.power(val_of_bins_x2, 2),where=(val_of_bins_x1 != 0))
             
         bincenter = 0.5 * (edges_of_bins_x1[1:] + edges_of_bins_x1[:-1])
             
         ax[0].legend(loc='upper right',fontsize=10,framealpha=0.2)
         #ax[0].set_xlabel(var, size=10)
         ax[0].set_ylabel("Normalized distribution \n (Method=density)", size=10)
-            
-        #ax[1].errorbar(bincenter, pltratio, yerr=plterror, fmt='.', color='b')
-        ax[1].hist(pltratio, color = ['k'], bins = Bins[var], histtype='step',density=True, label="ratio")
+        
+        
+        ax[1].errorbar(bincenter, pltratio, yerr=None, fmt='k.')
+        ax[1].grid(True)
         ax[1].set_xlabel(var, size=10)
         ax[1].set_ylabel("Ratio", size=10)
         
         plname=str(var)+'_charm.png'
+        fig.tight_layout()
         fig.savefig(plname,bbox_inches="tight")
         print("Savefig block done for "+var+".\n")
